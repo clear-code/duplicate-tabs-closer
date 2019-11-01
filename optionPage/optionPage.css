@@ -82,14 +82,16 @@ body {
   width: 260px;
 }
 
-#whiteListLabel {
+#whiteListLabel,
+#mergeListLabel {
   margin-top: 13px;
   margin-left: 2px;
   font-weight: normal;
   font-size: 13px;
 }
 
-#whiteList {
+#whiteList,
+#mergeList {
   /* width: 700px; */
   max-width: 100%;
   margin-top: -3px;

@@ -36,6 +36,14 @@ const loadPageEvents = () => {
     saveOption(this.id, whiteList, false);
   });
 
+  // Save mergeList settings
+  $("#mergeList").on("change", function () {
+    let mergeList = $(this).val();
+    mergeList = cleanUpMergeList(mergeList);
+    setMergeList(mergeList);
+    saveOption(this.id, mergeList, false);
+  });
+
   // Active selected tab
   $("#duplicateTabsTable").on("click", ".td-tab-link", function () {
     const tabId = parseInt($(this).parent().attr("tabId"));
@@ -73,10 +81,19 @@ const cleanUpWhiteList = (whiteList) => {
   return Array.from(whiteListCleaned).join('\n');
 };
 
+const setMergeList = (mergeList) => {
+  $("#mergeList").val(mergeList);
+};
+
+const cleanUpMergeList = (mergeList) => {
+  return mergeList.trim();
+};
+
 // Show/Hide the AutoClose options
 const changeAutoCloseOptionState = (state) => {
   $("#onRemainingTabGroup").toggleClass("hidden", state !== "A");
   $("#whiteListGroup").toggleClass("hidden", state !== "A");
+  $("#mergeListGroup").toggleClass("hidden", state !== "A");
 };
 
 const sendMessage = (action, data) => {
@@ -145,6 +162,9 @@ const setPanelOption = (option, value, locked = false) => {
   } else if (option === "whiteList") {
     $("#whiteList").val(value);
     if (locked) $("#whiteList").prop("disabled", true);
+  } else if (option === "mergeList") {
+    $("#mergeList").val(value);
+    if (locked) $("#mergeList").prop("disabled", true);
   } else {
     if (typeof (value) === "boolean") {
       $("#" + option).prop("checked", value);

@@ -7,8 +7,15 @@ const removeFromIgnoreTabs = (tabId) => tabstoIgnore.delete(tabId);
 const addToIgnoreTabs = (tabId) => tabstoIgnore.add(tabId);
 
 const isWhiteListed = (url) => {
-    const matches = options.whiteList.filter(pattern => pattern.test(url));
-    return matches.length !== 0;
+    return options.whiteList.some(pattern => pattern.test(url));
+};
+
+const getMergeMatcher = (url) => {
+    const matchers = options.mergeList.filter(pattern => pattern.test(url));
+    if (matchers.length === 0) {
+        return null;
+    }
+    return new RegExp(matchers.map(rule => rule.source).join('|'));
 };
 
 const matchTitle = (openTab, signaledTab) => {
@@ -259,12 +266,15 @@ const searchAndCloseNewDuplicateTabs = async (searchInfo) => {
         if (options.searchInSameContainer) queryInfo.cookieStoreId = signaledTab.cookieStoreId;
     }
 
+    const matchingSignaledTabUrl = getMatchingURL(signaledTabUrl);
+    const mergeMatcher = getMergeMatcher(signaledTabUrl);
+
     queryInfo.status = searchInfo.queryStatus;
-    queryInfo.url = getPatternUrl(signaledTabUrl);
+    if (!mergeMatcher) {
+        queryInfo.url = getPatternUrl(signaledTabUrl);
+    }
 
     const openTabs = await getTabs(queryInfo);
-
-    const matchingSignaledTabUrl = getMatchingURL(signaledTabUrl);
 
     let match = false;
 
@@ -274,7 +284,10 @@ const searchAndCloseNewDuplicateTabs = async (searchInfo) => {
             continue;
         }
 
-        if ((getMatchingURL(openTab.url) === matchingSignaledTabUrl) || matchTitle(openTab, signaledTab)) {
+        const url = getMatchingURL(openTab.url);
+        if ((url=== matchingSignaledTabUrl) ||
+            matchTitle(openTab, signaledTab) ||
+            (mergeMatcher && mergeMatcher.test(url))) {
             match = true;
             const tabsPriority = getTabsPriority(signaledTab, signaledTabUrl, openTab);
             closeDuplicateTab(tabsPriority);

@@ -49,6 +49,9 @@ const defaultOptions = {
     whiteList: {
         value: ""
     },
+    mergeList: {
+        value: ""
+    },
     badgeColorDuplicateTabs: {
         value: "#f22121"
     },
@@ -125,6 +128,7 @@ const options = {
     searchInCurrentWindow: false,
     searchInAllWindows: false,
     whiteList: [],
+    mergeList: [],
     badgeColorDuplicateTabs: "",
     badgeColorNoDuplicateTabs: "",
     showBadgeIfNoDuplicateTabs: false
@@ -146,6 +150,7 @@ const setOptions = (storedOptions) => {
     options.searchInCurrentWindow = storedOptions["scope"].value === "C";
     options.searchInAllWindows = storedOptions["scope"].value === "A";
     options.whiteList = whiteListToPattern(storedOptions["whiteList"].value);
+    options.mergeList = mergeListToPattern(storedOptions["mergeList"].value);
     options.badgeColorDuplicateTabs = storedOptions["badgeColorDuplicateTabs"].value;
     options.badgeColorNoDuplicateTabs = storedOptions["badgeColorNoDuplicateTabs"].value;
     options.showBadgeIfNoDuplicateTabs = storedOptions["showBadgeIfNoDuplicateTabs"].value;
@@ -206,4 +211,30 @@ const whiteListToPattern = (whiteList) => {
     });
 
     return Array.from(whiteListPatterns);
+};
+
+const mergeListToPattern = (mergeList) => {
+
+    const mergeListPatterns = new Set();
+    const mergeListLines = mergeList.split('\n').map(line => line.trim());
+
+    let lastMergeList = new Set();
+    mergeListLines.forEach(mergeListLine => {
+        const length = mergeListLine.length;
+        if (length == 0 && lastMergeList.size > 0) {
+          mergeListPatterns.add(new RegExp(`^(${Array.from(lastMergeList).sort().join('|')})$`));
+          lastMergeList = new Set();
+        }
+        let pattern = '';
+        for (let index = 0; index < length; index++) {
+            const character = mergeListLine.charAt(index);
+            pattern = (character === '*') ? pattern + '.*' : pattern + character;
+        }
+        lastMergeList.add(pattern);
+    });
+    if (lastMergeList.size > 0) {
+      mergeListPatterns.add(new RegExp(`^(${Array.from(lastMergeList).sort().join('|')})$`));
+    }
+
+    return Array.from(mergeListPatterns);
 };

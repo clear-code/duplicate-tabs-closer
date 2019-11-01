@@ -107,6 +107,10 @@
     "message": "Whitelist",
     "description": "Whitelist"
   },
+  "mergeList": {
+    "message": "Merge list (groups are separated with blank lines)",
+    "description": "Merge list (groups are separated with blank lines)"
+  },
   "customization": {
     "message": "Customization",
     "description": "Customization"

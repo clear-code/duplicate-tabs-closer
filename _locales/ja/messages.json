@@ -107,6 +107,10 @@
     "message": "ホワイトリスト",
     "description": "Whitelist"
   },
+  "mergeList": {
+    "message": "マージリスト（グループ同士は空白行で区切る）",
+    "description": "Merge list (groups are separated with blank lines)"
+  },
   "customization": {
     "message": "カスタマイズ",
     "description": "Customization"
