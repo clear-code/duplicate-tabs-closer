@@ -163,6 +163,9 @@ const manageUniqueTab = (matchingInfo) => {
     let matchingTabURL = getMatchingURL(matchingInfo.tab.url);
     let matchingTabTitle = options.compareWithTitle && isTabComplete(matchingInfo.tab) ? matchingInfo.tab.title : "";
 
+    const mergeMatcher = getMergeMatcher(matchingTabURL);
+    if (mergeMatcher) matchingTabURL = mergeMatcher.source;
+
     if (options.searchInSameContainer) {
         matchingTabURL += matchingInfo.tab.cookieStoreId;
         if (matchingTabTitle) matchingTabTitle += matchingInfo.tab.cookieStoreId;
