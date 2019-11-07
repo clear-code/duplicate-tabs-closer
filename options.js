@@ -49,6 +49,9 @@ const defaultOptions = {
     whiteList: {
         value: ""
     },
+    defaultMerge: {
+        value: true
+    },
     mergeList: {
         value: ""
     },
@@ -128,6 +131,7 @@ const options = {
     searchInCurrentWindow: false,
     searchInAllWindows: false,
     whiteList: [],
+    defaultMerge: true,
     mergeList: [],
     badgeColorDuplicateTabs: "",
     badgeColorNoDuplicateTabs: "",
@@ -150,6 +154,7 @@ const setOptions = (storedOptions) => {
     options.searchInCurrentWindow = storedOptions["scope"].value === "C";
     options.searchInAllWindows = storedOptions["scope"].value === "A";
     options.whiteList = whiteListToPattern(storedOptions["whiteList"].value);
+    options.defaultMerge = storedOptions["defaultMerge"].value;
     options.mergeList = mergeListToPattern(storedOptions["mergeList"].value);
     options.badgeColorDuplicateTabs = storedOptions["badgeColorDuplicateTabs"].value;
     options.badgeColorNoDuplicateTabs = storedOptions["badgeColorNoDuplicateTabs"].value;

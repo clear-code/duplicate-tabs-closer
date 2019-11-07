@@ -164,7 +164,12 @@ const manageUniqueTab = (matchingInfo) => {
     let matchingTabTitle = options.compareWithTitle && isTabComplete(matchingInfo.tab) ? matchingInfo.tab.title : "";
 
     const mergeMatcher = getMergeMatcher(matchingTabURL);
-    if (mergeMatcher) matchingTabURL = mergeMatcher.source;
+    if (mergeMatcher) {
+      matchingTabURL = mergeMatcher.source;
+    }
+    else if (!options.defaultMerge) {
+      return;
+    }
 
     if (options.searchInSameContainer) {
         matchingTabURL += matchingInfo.tab.cookieStoreId;
@@ -288,7 +293,8 @@ const searchAndCloseNewDuplicateTabs = async (searchInfo) => {
         }
 
         const url = getMatchingURL(openTab.url);
-        if ((url=== matchingSignaledTabUrl) ||
+        if ((options.defaultMerge &&
+             url=== matchingSignaledTabUrl) ||
             matchTitle(openTab, signaledTab) ||
             (mergeMatcher && mergeMatcher.test(url))) {
             match = true;
